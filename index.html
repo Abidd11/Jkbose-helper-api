@@ -9,6 +9,12 @@
       background: #E6E6F2;
       margin: 0;
       padding: 10px;
+
+      /* 🔒 Disable text selection */
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
     }
 
     .header {
@@ -268,7 +274,22 @@
     document.getElementById("postsContainer").style.display = "none";
     document.getElementById("loadMoreBtn").style.display = "none";
   });
+
+  // 🔒 Prevent copy/paste/select/inspect
+  document.addEventListener('contextmenu', function(e) {
+    e.preventDefault();
+  });
+
+  document.addEventListener('keydown', function(e) {
+    if ((e.ctrlKey || e.metaKey) && ['c','x','u','a','s'].includes(e.key.toLowerCase())) {
+      e.preventDefault();
+    }
+  });
+
+  document.addEventListener('copy', e => e.preventDefault());
+  document.addEventListener('cut', e => e.preventDefault());
+  document.addEventListener('selectstart', e => e.preventDefault());
 </script>
 
 </body>
-  </html>
+</html>
