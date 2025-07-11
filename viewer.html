@@ -5,26 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Post Viewer</title>
   <style>
-    * {
-      box-sizing: border-box;
-    }
-
+    * { box-sizing: border-box; }
     body {
       margin: 0;
       font-family: Arial, sans-serif;
       padding: 12px;
       background: #E6E6F2;
       user-select: none;
-      -webkit-user-select: none;
-      -moz-user-select: none;
-      -ms-user-select: none;
     }
-
-    .container {
-      max-width: 600px;
-      margin: auto;
-    }
-
+    .container { max-width: 600px; margin: auto; }
     .title-box {
       background: #fff;
       padding: 14px;
@@ -35,7 +24,6 @@
       margin-bottom: 10px;
       border: 1px solid #ccc;
     }
-
     .author-card {
       display: flex;
       align-items: center;
@@ -43,30 +31,26 @@
       padding: 8px 12px;
       border-radius: 8px;
       background: #fafafa;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
       margin-bottom: 16px;
       border: 1px solid #ddd;
     }
-
     .author-info {
       display: flex;
       align-items: center;
       gap: 10px;
     }
-
     .author-info img {
       width: 30px;
       height: 30px;
       border-radius: 50%;
       object-fit: cover;
     }
-
     .author-info span {
       font-size: 13px;
       color: #444;
       font-weight: 500;
     }
-
     .open-browser {
       text-decoration: none;
       padding: 6px;
@@ -76,13 +60,11 @@
       background: #1e88e5;
       border-radius: 6px;
     }
-
     .open-browser svg {
       width: 18px;
       height: 18px;
       fill: #fff;
     }
-
     .image-box img {
       width: 100%;
       height: auto;
@@ -91,7 +73,6 @@
       border-radius: 6px;
       margin-bottom: 16px;
     }
-
     .content-box {
       background: #fff;
       padding: 16px;
@@ -102,14 +83,12 @@
       border: 1px solid #ccc;
       margin-bottom: 10px;
     }
-
     .notification {
       font-size: 17px;
       font-weight: bold;
       text-align: center;
       margin-bottom: 12px;
     }
-
     .share-box {
       display: flex;
       justify-content: center;
@@ -117,7 +96,6 @@
       gap: 12px;
       margin: 14px 0;
     }
-
     .share-box a, .share-box button {
       width: 44px;
       height: 44px;
@@ -131,23 +109,19 @@
       border: none;
       cursor: pointer;
     }
-
     .share-box a:hover, .share-box button:hover {
       transform: scale(1.1);
     }
-
     .share-box img {
       width: 24px;
       height: 24px;
     }
-
     .loader {
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
     }
-
     .spinner {
       width: 40px;
       height: 40px;
@@ -156,7 +130,6 @@
       border-radius: 50%;
       animation: spin 1s linear infinite;
     }
-
     @keyframes spin {
       to { transform: rotate(360deg); }
     }
@@ -194,16 +167,16 @@
     const text = encodeURIComponent(`${title} - ${postUrl}`);
     return `
       <div class="share-box">
-        <a href="https://wa.me/?text=${text}" target="_blank" title="WhatsApp">
+        <a href="https://wa.me/?text=${text}" target="_blank" rel="noopener" title="WhatsApp">
           <img src="https://img.icons8.com/fluency/48/whatsapp.png" alt="WhatsApp"/>
         </a>
-        <a href="https://t.me/share/url?url=${postUrl}&text=${encodeURIComponent(title)}" target="_blank" title="Telegram">
+        <a href="https://t.me/share/url?url=${postUrl}&text=${encodeURIComponent(title)}" target="_blank" rel="noopener" title="Telegram">
           <img src="https://img.icons8.com/fluency/48/telegram-app.png" alt="Telegram"/>
         </a>
-        <a href="https://www.facebook.com/sharer/sharer.php?u=${postUrl}" target="_blank" title="Facebook">
+        <a href="https://www.facebook.com/sharer/sharer.php?u=${postUrl}" target="_blank" rel="noopener" title="Facebook">
           <img src="https://img.icons8.com/fluency/48/facebook-new.png" alt="Facebook"/>
         </a>
-        <a href="https://twitter.com/intent/tweet?url=${postUrl}&text=${encodeURIComponent(title)}" target="_blank" title="Twitter">
+        <a href="https://twitter.com/intent/tweet?url=${postUrl}&text=${encodeURIComponent(title)}" target="_blank" rel="noopener" title="Twitter">
           <img src="https://img.icons8.com/fluency/48/twitterx.png" alt="Twitter"/>
         </a>
         <button onclick="copyLink('${postUrl}')" title="Copy Link">
@@ -234,7 +207,7 @@
           ${authorImage ? `<img src="${authorImage}" alt="Author">` : ''}
           <span>Posted by ${authorName}</span>
         </div>
-        <a class="open-browser" href="${postUrl}" target="_blank" title="Open in browser">
+        <a class="open-browser" href="${postUrl}" target="_blank" rel="noopener noreferrer" title="Open in browser">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
             <path d="M14 3h7v7h-2V6.41l-9.29 9.3-1.42-1.42L17.59 5H14V3z"/>
             <path d="M5 5h4V3H5c-1.1 0-2 .9-2 2v4h2V5zm0 14v-4H3v4c0 1.1.9 2 2 2h4v-2H5zm14 0h-4v2h4c1.1 0 2-.9 2-2v-4h-2v4z"/>
@@ -269,17 +242,11 @@
   }
 </script>
 
-<!-- ⛔ Disable copying and right-click -->
+<!-- Disable right-click and copy -->
 <script>
-  document.addEventListener('contextmenu', function(e) {
-    e.preventDefault();
-  });
-
-  document.addEventListener('copy', function(e) {
-    e.preventDefault();
-  });
-
-  document.addEventListener('keydown', function(e) {
+  document.addEventListener('contextmenu', e => e.preventDefault());
+  document.addEventListener('copy', e => e.preventDefault());
+  document.addEventListener('keydown', e => {
     if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'c') {
       e.preventDefault();
     }
