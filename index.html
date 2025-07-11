@@ -9,8 +9,6 @@
       background: #E6E6F2;
       margin: 0;
       padding: 10px;
-
-      /* 🔒 Disable text selection */
       -webkit-user-select: none;
       -moz-user-select: none;
       -ms-user-select: none;
@@ -56,6 +54,16 @@
       justify-content: space-between;
       flex-wrap: wrap;
       position: relative;
+
+      /* Scroll animation */
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+
+    .card.visible {
+      opacity: 1;
+      transform: translateY(0);
     }
 
     .released-bottom {
@@ -180,6 +188,21 @@
     return imgMatch ? imgMatch[1] : "https://via.placeholder.com/60x60?text=No+Img";
   }
 
+  function observeCards() {
+    const cards = document.querySelectorAll('.card');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        } else {
+          entry.target.classList.remove('visible'); // Reset animation for scroll-up
+        }
+      });
+    }, { threshold: 0.1 });
+
+    cards.forEach(card => observer.observe(card));
+  }
+
   function renderPosts() {
     const container = document.getElementById("postsContainer");
     const slice = allPosts.slice(loadedCount, loadedCount + postsPerPage);
@@ -226,6 +249,8 @@
     loadedCount += slice.length;
     document.getElementById("loadMoreBtn").style.display =
       (loadedCount < allPosts.length) ? "block" : "none";
+
+    observeCards(); // Apply animation after posts are added
   }
 
   function loadAndRender() {
@@ -263,12 +288,10 @@
 
   document.getElementById("loadMoreBtn").addEventListener("click", renderPosts);
   window.addEventListener('load', checkConnectionAndLoad);
-
   window.addEventListener('online', () => {
     document.getElementById("noInternetBar").style.display = "none";
     checkConnectionAndLoad();
   });
-
   window.addEventListener('offline', () => {
     document.getElementById("noInternetBar").style.display = "block";
     document.getElementById("postsContainer").style.display = "none";
@@ -279,13 +302,11 @@
   document.addEventListener('contextmenu', function(e) {
     e.preventDefault();
   });
-
   document.addEventListener('keydown', function(e) {
     if ((e.ctrlKey || e.metaKey) && ['c','x','u','a','s'].includes(e.key.toLowerCase())) {
       e.preventDefault();
     }
   });
-
   document.addEventListener('copy', e => e.preventDefault());
   document.addEventListener('cut', e => e.preventDefault());
   document.addEventListener('selectstart', e => e.preventDefault());
