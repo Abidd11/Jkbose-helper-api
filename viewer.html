@@ -1,5 +1,4 @@
-<!DOCTYPE html><html lang="en">
-<head>
+<!DOCTYPE html><html lang="en"><head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Post Viewer</title>
@@ -101,7 +100,6 @@
     .share-box svg {
       width: 24px;
       height: 24px;
-      fill: #1e88e5;
     }
     .loader {
       display: flex;
@@ -130,10 +128,9 @@
   <script>
     const blogId = "4826225984632253093";
     const apiKey = "AIzaSyDIW4mUQN1KGJsaEQ_8CetkVl7LAyWwxVc";
-    const postId = new URLSearchParams(window.location.search).get("id");const loader = document.getElementById("loader");
-const container = document.getElementById("postContainer");
-
-function extractImage(content) {
+    const postId = new URLSearchParams(window.location.search).get("id");
+    const loader = document.getElementById("loader");
+    const container = document.getElementById("postContainer");function extractImage(content) {
   const div = document.createElement("div");
   div.innerHTML = content;
   const img = div.querySelector("img");
@@ -146,17 +143,20 @@ function extractImage(content) {
 }
 
 function createShareButtons(postUrl, title) {
-  const text = encodeURIComponent(`${title} - ${postUrl}`);
+  const encodedTitle = encodeURIComponent(title);
+  const encodedUrl = encodeURIComponent(postUrl);
+  const whatsappText = encodeURIComponent(`${title} - ${postUrl}`);
+
   return `
     <div class="share-box">
-      <a href="https://wa.me/?text=${text}" target="_blank" title="WhatsApp">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M16.001 0C7.165 0 0 7.165 0 16.002c0 2.82.738 5.57 2.144 7.992L0 32l8.278-2.128a15.978 15.978 0 007.723 1.972c8.836 0 16-7.165 16-15.999C32 7.165 24.837 0 16.001 0zm0 29.466c-2.397 0-4.742-.637-6.802-1.84l-.488-.29-4.914 1.263 1.308-4.788-.318-.501A13.4 13.4 0 012.533 16c0-7.42 6.048-13.468 13.467-13.468 7.42 0 13.468 6.048 13.468 13.468 0 7.42-6.048 13.466-13.467 13.466z"/><path d="M24.139 20.846l-3.299-.957a1.36 1.36 0 00-1.272.35l-.885.905a.862.862 0 01-.982.194c-2.043-.833-4.003-2.778-5.003-4.74a.857.857 0 01.168-.973l.791-.791a1.36 1.36 0 00.332-1.34l-.933-3.184a1.359 1.359 0 00-1.148-.965l-2.27-.167a1.36 1.36 0 00-1.436 1.618c.33 2.091 1.436 4.905 4.228 7.698s5.6 3.898 7.69 4.228a1.36 1.36 0 001.619-1.436l-.167-2.271a1.36 1.36 0 00-.965-1.148z"/></svg>
+      <a href="https://wa.me/?text=${whatsappText}" target="_blank" title="WhatsApp">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="#1e88e5"><path d="M16.001 0C7.165 0 0 7.165 0 16.002c0 2.82.738 5.57 2.144 7.992L0 32l8.278-2.128a15.978 15.978 0 007.723 1.972c8.836 0 16-7.165 16-15.999C32 7.165 24.837 0 16.001 0zm0 29.466c-2.397 0-4.742-.637-6.802-1.84l-.488-.29-4.914 1.263 1.308-4.788-.318-.501A13.4 13.4 0 012.533 16c0-7.42 6.048-13.468 13.467-13.468 7.42 0 13.468 6.048 13.468 13.468 0 7.42-6.048 13.466-13.467 13.466z"/><path d="M24.139 20.846l-3.299-.957a1.36 1.36 0 00-1.272.35l-.885.905a.862.862 0 01-.982.194c-2.043-.833-4.003-2.778-5.003-4.74a.857.857 0 01.168-.973l.791-.791a1.36 1.36 0 00.332-1.34l-.933-3.184a1.359 1.359 0 00-1.148-.965l-2.27-.167a1.36 1.36 0 00-1.436 1.618c.33 2.091 1.436 4.905 4.228 7.698s5.6 3.898 7.69 4.228a1.36 1.36 0 001.619-1.436l-.167-2.271a1.36 1.36 0 00-.965-1.148z"/></svg>
       </a>
-      <a href="https://t.me/share/url?url=${postUrl}&text=${encodeURIComponent(title)}" target="_blank" title="Telegram">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240"><path d="M120 0C53.728 0 0 53.728 0 120s53.728 120 120 120 120-53.728 120-120S186.272 0 120 0zm52.752 81.408l-19.44 91.92c-1.44 6.384-5.328 7.92-10.8 4.944l-29.808-22.008-14.352 13.824c-1.584 1.584-2.928 2.928-6 2.928l2.16-30.672 55.872-50.4c2.448-2.16-.528-3.36-3.792-1.2l-69.12 43.512-29.808-9.36c-6.48-1.992-6.624-6.48 1.368-9.576l116.016-44.64c5.424-1.968 10.128 1.344 8.352 9.528z"/></svg>
+      <a href="https://t.me/share/url?url=${encodedUrl}&text=${encodedTitle}" target="_blank" title="Telegram">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" fill="#1e88e5"><path d="M120 0C53.728 0 0 53.728 0 120s53.728 120 120 120 120-53.728 120-120S186.272 0 120 0zm52.752 81.408l-19.44 91.92c-1.44 6.384-5.328 7.92-10.8 4.944l-29.808-22.008-14.352 13.824c-1.584 1.584-2.928 2.928-6 2.928l2.16-30.672 55.872-50.4c2.448-2.16-.528-3.36-3.792-1.2l-69.12 43.512-29.808-9.36c-6.48-1.992-6.624-6.48 1.368-9.576l116.016-44.64c5.424-1.968 10.128 1.344 8.352 9.528z"/></svg>
       </a>
       <button onclick="copyLink('${postUrl}')" title="Copy Link">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3.9 12a5.98 5.98 0 0 0 1.76 4.24l2.83 2.83a5.98 5.98 0 0 0 8.48 0l1.42-1.42a1 1 0 1 0-1.42-1.42l-1.42 1.42a3.98 3.98 0 0 1-5.64 0l-2.83-2.83a3.98 3.98 0 0 1 0-5.64l1.42-1.42a1 1 0 0 0-1.42-1.42L5.66 7.76A5.98 5.98 0 0 0 3.9 12zm16.2 0a5.98 5.98 0 0 0-1.76-4.24l-2.83-2.83a5.98 5.98 0 0 0-8.48 0l-1.42 1.42a1 1 0 0 0 1.42 1.42l1.42-1.42a3.98 3.98 0 0 1 5.64 0l2.83 2.83a3.98 3.98 0 0 1 0 5.64l-1.42 1.42a1 1 0 1 0 1.42 1.42l1.42-1.42A5.98 5.98 0 0 0 20.1 12z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#1e88e5"><path d="M3.9 12a5.98 5.98 0 0 0 1.76 4.24l2.83 2.83a5.98 5.98 0 0 0 8.48 0l1.42-1.42a1 1 0 1 0-1.42-1.42l-1.42 1.42a3.98 3.98 0 0 1-5.64 0l-2.83-2.83a3.98 3.98 0 0 1 0-5.64l1.42-1.42a1 1 0 0 0-1.42-1.42L5.66 7.76A5.98 5.98 0 0 0 3.9 12zm16.2 0a5.98 5.98 0 0 0-1.76-4.24l-2.83-2.83a5.98 5.98 0 0 0-8.48 0l-1.42 1.42a1 1 0 0 0 1.42 1.42l1.42-1.42a3.98 3.98 0 0 1 5.64 0l2.83 2.83a3.98 3.98 0 0 1 0 5.64l-1.42 1.42a1 1 0 1 0 1.42 1.42l1.42-1.42A5.98 5.98 0 0 0 20.1 12z"/></svg>
       </button>
     </div>
   `;
