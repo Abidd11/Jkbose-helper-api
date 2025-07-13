@@ -266,21 +266,20 @@
           loader.innerHTML = "<p style='color:red;'>❌ Failed to load content</p>";
         });
     }
+  </script>
 
-    // Force Blogger post links to open in external browser
-    const observer = new MutationObserver(() => {
-      const links = document.querySelectorAll(".content-box a");
-      links.forEach(link => {
-        link.setAttribute("target", "_blank");
-        link.setAttribute("rel", "noopener noreferrer");
-        link.addEventListener("click", function(e) {
-          e.preventDefault();
-          window.open(this.href, '_blank');
-        });
-      });
+  <script>
+    // Prevent copying and long-press URL previews
+    document.addEventListener('contextmenu', e => e.preventDefault());
+    document.addEventListener('copy', e => e.preventDefault());
+    document.addEventListener('keydown', e => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'c') {
+        e.preventDefault();
+      }
     });
-
-    observer.observe(document.body, { childList: true, subtree: true });
+    document.body.addEventListener('touchstart', e => {
+      if (e.target.tagName === 'A') e.preventDefault();
+    }, { passive: false });
   </script>
 </body>
 </html>
