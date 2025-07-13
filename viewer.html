@@ -1,9 +1,16 @@
-<!DOCTYPE html><html lang="en"><head>
+<!DOCTYPE html>
+<html lang="en">
+<head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Post Viewer</title>
   <style>
-    * { box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+      -webkit-touch-callout: none;
+    }
+
     body {
       margin: 0;
       font-family: Arial, sans-serif;
@@ -11,7 +18,12 @@
       background: #E6E6F2;
       user-select: none;
     }
-    .container { max-width: 600px; margin: auto; }
+
+    .container {
+      max-width: 600px;
+      margin: auto;
+    }
+
     .title-box {
       background: #C5CAE8;
       padding: 14px;
@@ -22,6 +34,7 @@
       margin-bottom: 10px;
       border: 1px solid #ccc;
     }
+
     .author-box {
       display: inline-flex;
       align-items: center;
@@ -37,12 +50,14 @@
       box-shadow: 0 1px 3px rgba(0,0,0,0.05);
       max-width: fit-content;
     }
+
     .author-box img {
       width: 24px;
       height: 24px;
       border-radius: 50%;
       object-fit: cover;
     }
+
     .image-box img {
       width: 100%;
       height: auto;
@@ -51,6 +66,7 @@
       border-radius: 6px;
       margin-bottom: 16px;
     }
+
     .content-box {
       background: #fff;
       padding: 16px;
@@ -60,19 +76,23 @@
       color: #333;
       border: 1px solid #ccc;
       margin-bottom: 10px;
+      overflow-wrap: break-word;
     }
+
     .content-box img {
       max-width: 100%;
       height: auto;
       display: block;
       margin: 10px auto;
     }
+
     .notification {
       font-size: 17px;
       font-weight: bold;
       text-align: center;
       margin-bottom: 12px;
     }
+
     .share-box {
       display: flex;
       justify-content: center;
@@ -80,7 +100,9 @@
       gap: 12px;
       margin: 14px 0;
     }
-    .share-box a, .share-box button {
+
+    .share-box a,
+    .share-box button {
       width: 44px;
       height: 44px;
       border-radius: 50%;
@@ -93,20 +115,26 @@
       border: none;
       cursor: pointer;
     }
-    .share-box a:hover, .share-box button:hover {
+
+    .share-box a:hover,
+    .share-box button:hover {
       transform: scale(1.1);
       background-color: #bbdefb;
     }
+
     .share-box svg {
       width: 24px;
       height: 24px;
+      fill: #1e88e5;
     }
+
     .loader {
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
     }
+
     .spinner {
       width: 40px;
       height: 40px;
@@ -115,8 +143,33 @@
       border-radius: 50%;
       animation: spin 1s linear infinite;
     }
+
     @keyframes spin {
       to { transform: rotate(360deg); }
+    }
+
+    @media screen and (max-width: 480px) {
+      body {
+        padding: 8px;
+      }
+
+      .title-box {
+        font-size: 18px;
+        padding: 10px;
+      }
+
+      .content-box {
+        font-size: 14px;
+        padding: 12px;
+      }
+
+      .notification {
+        font-size: 15px;
+      }
+
+      .share-box {
+        gap: 10px;
+      }
     }
   </style>
 </head>
@@ -125,95 +178,109 @@
     <div class="spinner"></div>
   </div>
   <div class="container" id="postContainer" style="display: none;"></div>
+
   <script>
     const blogId = "4826225984632253093";
     const apiKey = "AIzaSyDIW4mUQN1KGJsaEQ_8CetkVl7LAyWwxVc";
-    const postId = new URLSearchParams(window.location.search).get("id");
+    const urlParams = new URLSearchParams(window.location.search);
+    const postId = urlParams.get("id");
+    const pageId = urlParams.get("pageId");
     const loader = document.getElementById("loader");
-    const container = document.getElementById("postContainer");function extractImage(content) {
-  const div = document.createElement("div");
-  div.innerHTML = content;
-  const img = div.querySelector("img");
-  if (img) {
-    const src = img.src;
-    img.remove();
-    return { image: src, html: div.innerHTML };
-  }
-  return { image: null, html: content };
-}
+    const container = document.getElementById("postContainer");
 
-function createShareButtons(postUrl, title) {
-  const encodedTitle = encodeURIComponent(title);
-  const encodedUrl = encodeURIComponent(postUrl);
-  const whatsappText = encodeURIComponent(`${title} - ${postUrl}`);
-
-  return `
-    <div class="share-box">
-      <a href="https://wa.me/?text=${whatsappText}" target="_blank" title="WhatsApp">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="#1e88e5"><path d="M16.001 0C7.165 0 0 7.165 0 16.002c0 2.82.738 5.57 2.144 7.992L0 32l8.278-2.128a15.978 15.978 0 007.723 1.972c8.836 0 16-7.165 16-15.999C32 7.165 24.837 0 16.001 0zm0 29.466c-2.397 0-4.742-.637-6.802-1.84l-.488-.29-4.914 1.263 1.308-4.788-.318-.501A13.4 13.4 0 012.533 16c0-7.42 6.048-13.468 13.467-13.468 7.42 0 13.468 6.048 13.468 13.468 0 7.42-6.048 13.466-13.467 13.466z"/><path d="M24.139 20.846l-3.299-.957a1.36 1.36 0 00-1.272.35l-.885.905a.862.862 0 01-.982.194c-2.043-.833-4.003-2.778-5.003-4.74a.857.857 0 01.168-.973l.791-.791a1.36 1.36 0 00.332-1.34l-.933-3.184a1.359 1.359 0 00-1.148-.965l-2.27-.167a1.36 1.36 0 00-1.436 1.618c.33 2.091 1.436 4.905 4.228 7.698s5.6 3.898 7.69 4.228a1.36 1.36 0 001.619-1.436l-.167-2.271a1.36 1.36 0 00-.965-1.148z"/></svg>
-      </a>
-      <a href="https://t.me/share/url?url=${encodedUrl}&text=${encodedTitle}" target="_blank" title="Telegram">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" fill="#1e88e5"><path d="M120 0C53.728 0 0 53.728 0 120s53.728 120 120 120 120-53.728 120-120S186.272 0 120 0zm52.752 81.408l-19.44 91.92c-1.44 6.384-5.328 7.92-10.8 4.944l-29.808-22.008-14.352 13.824c-1.584 1.584-2.928 2.928-6 2.928l2.16-30.672 55.872-50.4c2.448-2.16-.528-3.36-3.792-1.2l-69.12 43.512-29.808-9.36c-6.48-1.992-6.624-6.48 1.368-9.576l116.016-44.64c5.424-1.968 10.128 1.344 8.352 9.528z"/></svg>
-      </a>
-      <button onclick="copyLink('${postUrl}')" title="Copy Link">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#1e88e5"><path d="M3.9 12a5.98 5.98 0 0 0 1.76 4.24l2.83 2.83a5.98 5.98 0 0 0 8.48 0l1.42-1.42a1 1 0 1 0-1.42-1.42l-1.42 1.42a3.98 3.98 0 0 1-5.64 0l-2.83-2.83a3.98 3.98 0 0 1 0-5.64l1.42-1.42a1 1 0 0 0-1.42-1.42L5.66 7.76A5.98 5.98 0 0 0 3.9 12zm16.2 0a5.98 5.98 0 0 0-1.76-4.24l-2.83-2.83a5.98 5.98 0 0 0-8.48 0l-1.42 1.42a1 1 0 0 0 1.42 1.42l1.42-1.42a3.98 3.98 0 0 1 5.64 0l2.83 2.83a3.98 3.98 0 0 1 0 5.64l-1.42 1.42a1 1 0 1 0 1.42 1.42l1.42-1.42A5.98 5.98 0 0 0 20.1 12z"/></svg>
-      </button>
-    </div>
-  `;
-}
-
-function copyLink(link) {
-  navigator.clipboard.writeText(link).then(() => {
-    alert("✅ Link copied to clipboard!");
-  });
-}
-
-function createHTML(post) {
-  const { image, html } = extractImage(post.content);
-  const authorImage = post.author?.image?.url || '';
-  const authorName = post.author?.displayName || 'Unknown Author';
-  const postUrl = post.url;
-  const postTitle = post.title;
-
-  return `
-    <div class="title-box">${postTitle}</div>
-    <div class="author-box">
-      ${authorImage ? `<img src="${authorImage}" alt="Author">` : ''}
-      <span>${authorName}</span>
-    </div>
-    ${image ? `<div class="image-box"><img src="${image}" alt="Post Image"></div>` : ''}
-    <div class="content-box">
-      <div class="notification">Notification</div>
-      ${html}
-    </div>
-    ${createShareButtons(postUrl, postTitle)}
-  `;
-}
-
-if (!postId) {
-  loader.innerHTML = "<p style='color:red;'>❌ Invalid post ID</p>";
-} else {
-  fetch(`https://www.googleapis.com/blogger/v3/blogs/${blogId}/posts/${postId}?key=${apiKey}`)
-    .then(res => res.json())
-    .then(post => {
-      loader.style.display = "none";
-      container.innerHTML = createHTML(post);
-      container.style.display = "block";
-    })
-    .catch(() => {
-      loader.innerHTML = "<p style='color:red;'>❌ Failed to load post</p>";
-    });
-}
-
-  </script>
-  <script>
-    document.addEventListener('contextmenu', e => e.preventDefault());
-    document.addEventListener('copy', e => e.preventDefault());
-    document.addEventListener('keydown', e => {
-      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'c') {
-        e.preventDefault();
+    function extractImage(content) {
+      const div = document.createElement("div");
+      div.innerHTML = content;
+      const img = div.querySelector("img");
+      if (img) {
+        const src = img.src;
+        img.remove();
+        return { image: src, html: div.innerHTML };
       }
+      return { image: null, html: content };
+    }
+
+    function copyLink(link) {
+      navigator.clipboard.writeText(link).then(() => {
+        alert("✅ Link copied to clipboard!");
+      });
+    }
+
+    function createShareButtons(postUrl, title) {
+      const encodedTitle = encodeURIComponent(title);
+      const encodedUrl = encodeURIComponent(postUrl);
+      const whatsappText = encodeURIComponent(`${title} - ${postUrl}`);
+      return `
+        <div class="share-box">
+          <a href="https://wa.me/?text=${whatsappText}" target="_blank" title="WhatsApp">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M16 0C7.163 0 0 7.163 0 16c0 2.821.738 5.578 2.146 8.006L0 32l8.278-2.129A15.978 15.978 0 0016 32c8.837 0 16-7.163 16-16S24.837 0 16 0zM23.336 23.318c-.4 1.122-2.328 2.077-3.182 2.215-.83.137-1.838.2-2.956-.218-3.404-1.288-5.6-4.531-5.867-4.886-.267-.354-1.396-1.854-1.396-3.547 0-1.692.883-2.531 1.199-2.889.32-.354.703-.443.938-.443.235 0 .469.002.674.012.216.01.503-.082.786.6.283.685.96 2.365 1.048 2.537.087.172.146.373.03.601-.117.228-.176.371-.346.573-.172.201-.36.449-.514.603-.172.172-.35.359-.15.708.2.349.888 1.46 1.906 2.365 1.31 1.164 2.405 1.525 2.755 1.697.35.172.55.144.755-.087.205-.229.865-1.005 1.096-1.352.23-.344.457-.287.776-.172.32.115 2.038.961 2.388 1.135.35.174.583.258.668.403.085.143.085.825-.314 1.947z"/></svg>
+          </a>
+          <a href="https://t.me/share/url?url=${encodedUrl}&text=${encodedTitle}" target="_blank" title="Telegram">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240"><path d="M120 0C53.728 0 0 53.728 0 120s53.728 120 120 120 120-53.728 120-120S186.272 0 120 0zm52.752 81.408l-19.44 91.92c-1.44 6.384-5.328 7.92-10.8 4.944l-29.808-22.008-14.352 13.824c-1.584 1.584-2.928 2.928-6 2.928l2.16-30.672 55.872-50.4c2.448-2.16-.528-3.36-3.792-1.2l-69.12 43.512-29.808-9.36c-6.48-1.992-6.624-6.48 1.368-9.576l116.016-44.64c5.424-1.968 10.128 1.344 8.352 9.528z"/></svg>
+          </a>
+          <button onclick="copyLink('${postUrl}')" title="Copy Link">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3.9 12a5.98 5.98 0 001.76 4.24l2.83 2.83a5.98 5.98 0 008.48 0l1.42-1.42a1 1 0 10-1.42-1.42l-1.42 1.42a3.98 3.98 0 01-5.64 0l-2.83-2.83a3.98 3.98 0 010-5.64l1.42-1.42a1 1 0 00-1.42-1.42L5.66 7.76A5.98 5.98 0 003.9 12zm16.2 0a5.98 5.98 0 00-1.76-4.24l-2.83-2.83a5.98 5.98 0 00-8.48 0l-1.42 1.42a1 1 0 001.42 1.42l1.42-1.42a3.98 3.98 0 015.64 0l2.83 2.83a3.98 3.98 0 010 5.64l-1.42 1.42a1 1 0 001.42 1.42l1.42-1.42A5.98 5.98 0 0020.1 12z"/></svg>
+          </button>
+        </div>`;
+    }
+
+    function createHTML(post) {
+      const { image, html } = extractImage(post.content);
+      const authorImage = post.author?.image?.url || '';
+      const authorName = post.author?.displayName || 'Unknown Author';
+      const postUrl = post.url;
+      const postTitle = post.title;
+
+      return `
+        <div class="title-box">${postTitle}</div>
+        <div class="author-box">
+          ${authorImage ? `<img src="${authorImage}" alt="Author">` : ''}
+          <span>${authorName}</span>
+        </div>
+        ${image ? `<div class="image-box"><img src="${image}" alt="Post Image"></div>` : ''}
+        <div class="content-box">
+          <div class="notification">Notification</div>
+          ${html}
+        </div>
+        ${createShareButtons(postUrl, postTitle)}
+      `;
+    }
+
+    const endpoint = pageId
+      ? `https://www.googleapis.com/blogger/v3/blogs/${blogId}/pages/${pageId}?key=${apiKey}`
+      : postId
+      ? `https://www.googleapis.com/blogger/v3/blogs/${blogId}/posts/${postId}?key=${apiKey}`
+      : null;
+
+    if (!endpoint) {
+      loader.innerHTML = "<p style='color:red;'>❌ Invalid ID</p>";
+    } else {
+      fetch(endpoint)
+        .then(res => res.json())
+        .then(post => {
+          loader.style.display = "none";
+          container.innerHTML = createHTML(post);
+          container.style.display = "block";
+        })
+        .catch(() => {
+          loader.innerHTML = "<p style='color:red;'>❌ Failed to load content</p>";
+        });
+    }
+
+    // Force Blogger post links to open in external browser
+    const observer = new MutationObserver(() => {
+      const links = document.querySelectorAll(".content-box a");
+      links.forEach(link => {
+        link.setAttribute("target", "_blank");
+        link.setAttribute("rel", "noopener noreferrer");
+        link.addEventListener("click", function(e) {
+          e.preventDefault();
+          window.open(this.href, '_blank');
+        });
+      });
     });
+
+    observer.observe(document.body, { childList: true, subtree: true });
   </script>
 </body>
 </html>
