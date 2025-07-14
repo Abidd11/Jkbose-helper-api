@@ -15,12 +15,13 @@
       margin: 0;
       font-family: Arial, sans-serif;
       padding: 12px;
-      background: #E6E6F2;
+      background: ;
+      color: #222;
       user-select: none;
     }
 
     .container {
-      max-width: 600px;
+      max-width: 800px;
       margin: auto;
     }
 
@@ -67,30 +68,25 @@
       margin-bottom: 16px;
     }
 
-    .content-box {
-      background: #E6E6F2;
-      padding: 16px;
-      border-radius: 6px;
-      font-size: 15px;
-      line-height: 1.6;
+    .content {
+      font-size: 16px;
+      line-height: 1.7;
       color: #333;
-      border: 1px solid #ccc;
-      margin-bottom: 10px;
       overflow-wrap: break-word;
     }
 
-    .content-box img {
+    .content img {
       max-width: 100%;
       height: auto;
       display: block;
-      margin: 10px auto;
+      margin: 15px auto;
     }
 
     .notification {
-      font-size: 17px;
+      font-size: 16px;
       font-weight: bold;
       text-align: center;
-      margin-bottom: 12px;
+      margin: 20px 0 10px;
     }
 
     .loader {
@@ -115,7 +111,7 @@
 
     @media screen and (max-width: 480px) {
       body {
-        padding: 8px;
+        padding: 10px;
       }
 
       .title-box {
@@ -123,12 +119,12 @@
         padding: 10px;
       }
 
-      .content-box {
-        font-size: 14px;
-        padding: 12px;
+      .author-box {
+        font-size: 12px;
+        padding: 5px 10px;
       }
 
-      .notification {
+      .content {
         font-size: 15px;
       }
     }
@@ -174,8 +170,8 @@
           <span>${authorName}</span>
         </div>
         ${image ? `<div class="image-box"><img src="${image}" alt="Post Image"></div>` : ''}
-        <div class="content-box">
-          <div class="notification">Notification</div>
+        <div class="content">
+          <div class="notification"</div>
           ${html}
         </div>
       `;
