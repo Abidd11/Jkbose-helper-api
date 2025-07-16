@@ -15,7 +15,7 @@
       margin: 0;
       font-family: Arial, sans-serif;
       padding: 12px;
-      background: ;
+      background: #fff;
       color: #222;
       user-select: none;
     }
@@ -23,40 +23,6 @@
     .container {
       max-width: 800px;
       margin: auto;
-    }
-
-    .title-box {
-      background: #C5CAE8;
-      padding: 14px;
-      border-radius: 6px;
-      font-size: 20px;
-      font-weight: bold;
-      text-align: center;
-      margin-bottom: 10px;
-      border: 1px solid #ccc;
-    }
-
-    .author-box {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: #E6E6F2;
-      border: 1px solid #ccc;
-      border-radius: 50px;
-      padding: 6px 10px;
-      font-size: 12px;
-      color: #444;
-      font-weight: 500;
-      margin: 0 auto 14px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-      max-width: fit-content;
-    }
-
-    .author-box img {
-      width: 24px;
-      height: 24px;
-      border-radius: 50%;
-      object-fit: cover;
     }
 
     .image-box img {
@@ -114,16 +80,6 @@
         padding: 10px;
       }
 
-      .title-box {
-        font-size: 18px;
-        padding: 10px;
-      }
-
-      .author-box {
-        font-size: 12px;
-        padding: 5px 10px;
-      }
-
       .content {
         font-size: 15px;
       }
@@ -159,19 +115,10 @@
 
     function createHTML(post) {
       const { image, html } = extractImage(post.content);
-      const authorImage = post.author?.image?.url || '';
-      const authorName = post.author?.displayName || 'Unknown Author';
-      const postTitle = post.title;
-
       return `
-        <div class="title-box">${postTitle}</div>
-        <div class="author-box">
-          ${authorImage ? `<img src="${authorImage}" alt="Author">` : ''}
-          <span>${authorName}</span>
-        </div>
         ${image ? `<div class="image-box"><img src="${image}" alt="Post Image"></div>` : ''}
         <div class="content">
-          <div class="notification"</div>
+          <div class="notification"></div>
           ${html}
         </div>
       `;
@@ -210,4 +157,4 @@
     });
   </script>
 </body>
-</html>
+  </html>
